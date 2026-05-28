@@ -6,7 +6,9 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 async function request(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
+  const base = API_BASE.replace(/\/+$/, '');
+  const path = endpoint.replace(/^\/+/, '');
+  const url = `${base}/${path}`;
   const config = {
     headers: { 'Content-Type': 'application/json' },
     ...options,

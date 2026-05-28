@@ -105,7 +105,7 @@ The project deploys as two services:
    - **Environment**: Python 3
    - **Branch**: `main`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
+   - **Start Command**: `python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT`
    - **Plan**: Free
 5. Click **"Create Web Service"** and wait for the build to complete.
 6. Copy your Render service URL (e.g., `https://customer-intelligence-api.onrender.com`).

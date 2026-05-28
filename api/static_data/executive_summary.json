@@ -1,0 +1,160 @@
+{
+  "kpis": {
+    "active_customers": 95420,
+    "avg_spend": 142.44,
+    "churn_rate": 87.7,
+    "high_risk_count": 83651,
+    "avg_tenure_months": 7.6
+  },
+  "segment_distribution": [
+    {
+      "segment": "New Customers",
+      "count": 23870
+    },
+    {
+      "segment": "Loyal Customers",
+      "count": 23084
+    },
+    {
+      "segment": "At Risk",
+      "count": 22875
+    },
+    {
+      "segment": "Champions",
+      "count": 12859
+    },
+    {
+      "segment": "Lost",
+      "count": 12732
+    }
+  ],
+  "segment_spend": [
+    {
+      "segment": "At Risk",
+      "total_spend": 4340978.37
+    },
+    {
+      "segment": "Champions",
+      "total_spend": 3145583.13
+    },
+    {
+      "segment": "Lost",
+      "total_spend": 594627.52
+    },
+    {
+      "segment": "Loyal Customers",
+      "total_spend": 2362366.39
+    },
+    {
+      "segment": "New Customers",
+      "total_spend": 3148088.29
+    }
+  ],
+  "treemap_data": [
+    {
+      "rfm_segment": "At Risk",
+      "city_tier": "Tier 1",
+      "customer_count": 14534,
+      "total_spend": 2652325.42,
+      "avg_recency": 416.2593917710197
+    },
+    {
+      "rfm_segment": "At Risk",
+      "city_tier": "Tier 2",
+      "customer_count": 4389,
+      "total_spend": 814023.06,
+      "avg_recency": 417.1784005468216
+    },
+    {
+      "rfm_segment": "At Risk",
+      "city_tier": "Tier 3",
+      "customer_count": 3952,
+      "total_spend": 874629.89,
+      "avg_recency": 416.07211538461536
+    },
+    {
+      "rfm_segment": "Champions",
+      "city_tier": "Tier 1",
+      "customer_count": 8569,
+      "total_spend": 2018916.03,
+      "avg_recency": 116.74524448593768
+    },
+    {
+      "rfm_segment": "Champions",
+      "city_tier": "Tier 2",
+      "customer_count": 2367,
+      "total_spend": 586508.82,
+      "avg_recency": 117.55851288550909
+    },
+    {
+      "rfm_segment": "Champions",
+      "city_tier": "Tier 3",
+      "customer_count": 1923,
+      "total_spend": 540158.28,
+      "avg_recency": 117.55382215288611
+    },
+    {
+      "rfm_segment": "Lost",
+      "city_tier": "Tier 1",
+      "customer_count": 8447,
+      "total_spend": 396192.17,
+      "avg_recency": 370.5017165857701
+    },
+    {
+      "rfm_segment": "Lost",
+      "city_tier": "Tier 2",
+      "customer_count": 2451,
+      "total_spend": 112959.17,
+      "avg_recency": 371.12076703386373
+    },
+    {
+      "rfm_segment": "Lost",
+      "city_tier": "Tier 3",
+      "customer_count": 1834,
+      "total_spend": 85476.18,
+      "avg_recency": 368.0059978189749
+    },
+    {
+      "rfm_segment": "Loyal Customers",
+      "city_tier": "Tier 1",
+      "customer_count": 15788,
+      "total_spend": 1544555.77,
+      "avg_recency": 199.54123384849254
+    },
+    {
+      "rfm_segment": "Loyal Customers",
+      "city_tier": "Tier 2",
+      "customer_count": 4088,
+      "total_spend": 424673.23,
+      "avg_recency": 206.98140900195693
+    },
+    {
+      "rfm_segment": "Loyal Customers",
+      "city_tier": "Tier 3",
+      "customer_count": 3208,
+      "total_spend": 393137.39,
+      "avg_recency": 216.05579800498754
+    },
+    {
+      "rfm_segment": "New Customers",
+      "city_tier": "Tier 1",
+      "customer_count": 16109,
+      "total_spend": 2002057.53,
+      "avg_recency": 115.88453659445031
+    },
+    {
+      "rfm_segment": "New Customers",
+      "city_tier": "Tier 2",
+      "customer_count": 4315,
+      "total_spend": 591375.52,
+      "avg_recency": 120.46095017381228
+    },
+    {
+      "rfm_segment": "New Customers",
+      "city_tier": "Tier 3",
+      "customer_count": 3446,
+      "total_spend": 554655.24,
+      "avg_recency": 120.32211259431224
+    }
+  ]
+}

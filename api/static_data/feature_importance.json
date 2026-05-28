@@ -1,0 +1,66 @@
+{
+  "model_type": "XGBoost Classifier",
+  "total_features": 32,
+  "top_features": [
+    {
+      "feature": "purchase_interval_avg",
+      "importance": 1.0
+    },
+    {
+      "feature": "recency_days",
+      "importance": 0.0
+    },
+    {
+      "feature": "frequency_total",
+      "importance": 0.0
+    },
+    {
+      "feature": "monetary_value_total",
+      "importance": 0.0
+    },
+    {
+      "feature": "avg_order_value",
+      "importance": 0.0
+    },
+    {
+      "feature": "basket_diversity",
+      "importance": 0.0
+    },
+    {
+      "feature": "discount_dependency_ratio",
+      "importance": 0.0
+    },
+    {
+      "feature": "delivery_delay_tolerance_avg",
+      "importance": 0.0
+    },
+    {
+      "feature": "session_frequency",
+      "importance": 0.0
+    },
+    {
+      "feature": "time_of_day_pref",
+      "importance": 0.0
+    },
+    {
+      "feature": "category_affinity_score",
+      "importance": 0.0
+    },
+    {
+      "feature": "repeat_purchase_ratio",
+      "importance": 0.0
+    },
+    {
+      "feature": "max_spend_single",
+      "importance": 0.0
+    },
+    {
+      "feature": "weekend_spend_ratio",
+      "importance": 0.0
+    },
+    {
+      "feature": "avg_items_per_order",
+      "importance": 0.0
+    }
+  ]
+}

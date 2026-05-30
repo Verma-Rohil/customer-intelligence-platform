@@ -60,4 +60,7 @@ export const api = {
 
   // Segment data for deep dive
   segmentData: () => request('/api/segment-data'),
+
+  // Get customer features by ID
+  getCustomer: (id) => request(`/api/customer/${id}`),
 };

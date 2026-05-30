@@ -18,10 +18,11 @@ _PREPROCESSOR = None
 _KMEANS_MODEL = None
 _XGB_MODEL = None
 _SHAP_EXPLAINER = None
+_CUSTOMER_DF = None
 
 def load_models():
     """Loads serialized models into memory for fast inference."""
-    global _PREPROCESSOR, _KMEANS_MODEL, _XGB_MODEL, _SHAP_EXPLAINER
+    global _PREPROCESSOR, _KMEANS_MODEL, _XGB_MODEL, _SHAP_EXPLAINER, _CUSTOMER_DF
     
     try:
         if _PREPROCESSOR is None:
@@ -33,6 +34,13 @@ def load_models():
             
         if _SHAP_EXPLAINER is None and _XGB_MODEL is not None:
             _SHAP_EXPLAINER = shap.TreeExplainer(_XGB_MODEL)
+            
+        if _CUSTOMER_DF is None:
+            csv_path = os.path.join(config.PROCESSED_DATA_DIR, "customer_feature_matrix_enriched.csv")
+            if not os.path.exists(csv_path):
+                csv_path = os.path.join(config.PROCESSED_DATA_DIR, "customer_feature_matrix.csv")
+            if os.path.exists(csv_path):
+                _CUSTOMER_DF = pd.read_csv(csv_path)
             
         return True
     except Exception as e:
@@ -126,28 +134,106 @@ def predict_churn(payload_dict: dict) -> dict:
     }
 
 def simulate_campaign(segment_name: str, campaign_id: str, override_cost: float = None) -> dict:
-    # Dummy simulation math for the endpoint
-    size = 1500
-    cost_per_user = override_cost if override_cost else 500.0
+    global _CUSTOMER_DF
+    
+    # Ensure dataframe is loaded
+    if _CUSTOMER_DF is None:
+        load_models()
+        
+    # Segment definitions
+    campaign_names = {
+        "C1": "Flat 20% Discount",
+        "C2": "2x Loyalty Points",
+        "C3": "Personal Outreach Call",
+        "C4": "Onboarding Email Series"
+    }
+    
+    # Assumed % reduction in churners when targeted by the campaign
+    save_rates = {
+        "C1": 0.25, # Flat 20% Discount
+        "C2": 0.15, # 2x Loyalty Points
+        "C3": 0.40, # Personal Outreach Call
+        "C4": 0.10  # Onboarding Email Series
+    }
+    
+    default_costs = {
+        "C1": 150.0,
+        "C2": 100.0,
+        "C3": 450.0,
+        "C4": 10.0
+    }
+    
+    campaign_name = campaign_names.get(campaign_id, "Standard Retention")
+    assumed_reduction = save_rates.get(campaign_id, 0.20)
+    cost_per_user = override_cost if override_cost is not None else default_costs.get(campaign_id, 100.0)
+    
+    if _CUSTOMER_DF is not None:
+        # Filter by segment
+        segment_df = _CUSTOMER_DF[_CUSTOMER_DF['rfm_segment'] == segment_name]
+        if not segment_df.empty:
+            size = len(segment_df)
+            # CLV can be approximated by their historical average monetary spend
+            clv = float(segment_df['monetary_value_total'].mean())
+            # Estimate actual churn rate of this segment (either is_churned or recency > 60 days)
+            if 'is_churned' in segment_df.columns:
+                churn_rate = float(segment_df['is_churned'].mean())
+            else:
+                churn_rate = float((segment_df['recency_days'] > 60).mean())
+        else:
+            # Fallback if segment not found
+            size = 1500
+            clv = 5200.0
+            churn_rate = 0.35
+    else:
+        # Fallback if no dataframe
+        size = 1500
+        clv = 5200.0
+        churn_rate = 0.35
+        
+    churning_customers = int(size * churn_rate)
+    saved = int(churning_customers * assumed_reduction)
     total_cost = size * cost_per_user
-    clv = 5200.0
-    saved = int(size * 0.3)
     revenue = saved * clv
-    roi = ((revenue - total_cost) / total_cost) * 100
+    
+    roi = ((revenue - total_cost) / total_cost) * 100 if total_cost > 0 else 0.0
     
     return {
         "segment_name": segment_name,
         "segment_size": size,
-        "campaign_name": "Flat discount (20%)" if campaign_id == "C1" else "Loyalty Bonus",
+        "campaign_name": campaign_name,
         "cost_per_user": cost_per_user,
         "total_campaign_cost": total_cost,
-        "assumed_churn_reduction": 0.30,
+        "assumed_churn_reduction": assumed_reduction,
         "customers_saved": saved,
-        "avg_clv": clv,
-        "revenue_saved": revenue,
+        "avg_clv": round(clv, 2),
+        "revenue_saved": round(revenue, 2),
         "roi_percent": round(roi, 2),
         "recommendation": "PROCEED" if roi > 0 else "DO NOT PROCEED"
     }
+
+def get_customer_features(customer_id: str) -> dict:
+    """
+    Looks up a customer by ID and returns their features.
+    """
+    global _CUSTOMER_DF
+    if _CUSTOMER_DF is None:
+        load_models()
+        
+    if _CUSTOMER_DF is None:
+        return None
+        
+    row = _CUSTOMER_DF[_CUSTOMER_DF['customer_id'] == customer_id]
+    if row.empty:
+        return None
+        
+    customer_dict = row.iloc[0].to_dict()
+    
+    # Replace NaN/inf for JSON serialization
+    for k, v in customer_dict.items():
+        if pd.isna(v):
+            customer_dict[k] = None
+            
+    return customer_dict
 
 
 # ──────────────────────────────────────────────────────────

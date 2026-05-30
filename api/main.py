@@ -6,7 +6,8 @@ import logging
 from api.schemas import CustomerFeatures, CampaignSimulationRequest
 from api.services import (
     load_models, segment_customer, predict_churn, simulate_campaign,
-    get_executive_summary, get_feature_importances, get_segment_data
+    get_executive_summary, get_feature_importances, get_segment_data,
+    get_customer_features
 )
 
 # Initialize API
@@ -111,5 +112,18 @@ async def segment_data_endpoint():
     try:
         result = get_segment_data()
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/customer/{customer_id}")
+async def get_customer_endpoint(customer_id: str):
+    """Returns a specific customer's engineered features from the dataset."""
+    try:
+        result = get_customer_features(customer_id)
+        if not result:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        return result
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

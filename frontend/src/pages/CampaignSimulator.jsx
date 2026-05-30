@@ -113,7 +113,7 @@ export default function CampaignSimulator() {
             <MetricCard title="Segment Size" value={result.segment_size.toLocaleString()} delta="Target Audience" deltaType="neutral" />
             <MetricCard title="Customers Saved" value={result.customers_saved.toLocaleString()} delta={`${(result.assumed_churn_reduction * 100).toFixed(0)}% Conversion`} deltaType="up" />
             <MetricCard title="Campaign Cost" value={`₹${result.total_campaign_cost.toLocaleString()}`} delta={`₹${result.cost_per_user} per user`} deltaType="down" />
-            <MetricCard title="Revenue Saved" value={`₹${result.revenue_saved.toLocaleString()}`} delta={`Avg CLV: ₹${result.avg_clv}`} deltaType="up" />
+            <MetricCard title="Revenue Saved" value={`₹${result.revenue_saved.toLocaleString()}`} delta={`Avg CLV: ₹${result.avg_clv.toLocaleString()}`} deltaType="up" />
           </div>
 
           <div className="grid-2">

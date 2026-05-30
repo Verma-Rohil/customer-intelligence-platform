@@ -10,32 +10,43 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 export default function CustomerLookup() {
   const [customerId, setCustomerId] = useState('');
   const [result, setResult] = useState(null);
+  const [features, setFeatures] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const samplePayload = {
-    recency_days: 45,
-    frequency_total: 5,
-    monetary_value_total: 450.0,
-    avg_order_value: 90.0,
-    purchase_interval_avg: 25.0,
-    basket_diversity: 2,
-    discount_dependency_ratio: 0.45,
-    login_recency_days: 12,
-    complaint_count: 1,
-    satisfaction_score_avg: 3.2,
-    tenure_months: 8,
-    avg_discount_percent: 15.0,
-  };
+  const samples = [
+    { id: '001928b561575b2821c92254a2327d06', name: 'Champions (Low Risk)', badgeColor: 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20' },
+    { id: '000ec5bff359e1c0ad76a81a45cb598f', name: 'New Customer (Active)', badgeColor: 'bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20' },
+    { id: '0004aac84e0df4da2b147fca70cf8255', name: 'At Risk (High Spend)', badgeColor: 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-amber-500/20' },
+    { id: '0000f46a3911fa3c0805444483337064', name: 'Lost / Hibernating', badgeColor: 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border-rose-500/20' },
+  ];
 
-  const handleSearch = async () => {
+  const handleSearch = async (idToSearch) => {
+    const searchId = typeof idToSearch === 'string' ? idToSearch : customerId;
+    if (!searchId || !searchId.trim()) {
+      setError("Please enter a customer ID or click a sample profile below.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
+    setResult(null);
+    setFeatures(null);
+    
     try {
-      const data = await api.predictChurn(samplePayload);
-      setResult({ ...data, customerId: customerId || 'DEMO-USER' });
+      // 1. Fetch real customer attributes
+      const custFeatures = await api.getCustomer(searchId.trim());
+      setFeatures(custFeatures);
+      
+      // 2. Perform live inference on the real attributes
+      const data = await api.predictChurn(custFeatures);
+      setResult({ ...data, customerId: searchId.trim() });
     } catch (e) {
-      setError(e.message);
+      if (e.message.includes('404')) {
+        setError(`Customer ID "${searchId}" not found in database.`);
+      } else {
+        setError(`Failed to retrieve profile: ${e.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -54,13 +65,14 @@ export default function CustomerLookup() {
       </p>
 
       {/* Search Bar using shadcn components */}
-      <Card className="flex gap-4 items-center p-4 mb-6 shadow-sm border border-border">
+      <Card className="flex gap-4 items-center p-4 mb-4 shadow-sm border border-border">
         <Input
           type="text"
-          placeholder="Enter Customer ID (e.g., CUST-00042)"
+          placeholder="Enter Customer ID (e.g., 001928b561575b2821c92254a2327d06)"
           value={customerId}
           onChange={(e) => setCustomerId(e.target.value)}
           className="flex-1 h-10 px-4 py-2 text-sm bg-transparent border-input rounded-lg focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500"
+          onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
         />
         <Button 
           onClick={handleSearch} 
@@ -71,9 +83,29 @@ export default function CustomerLookup() {
         </Button>
       </Card>
 
+      {/* Quick Test Samples */}
+      <div className="mb-6 p-4 rounded-lg bg-slate-900/40 border border-slate-800/80">
+        <span className="text-xs font-semibold text-slate-400 block mb-2.5">💡 Quick Test: Click a real customer profile from the dataset</span>
+        <div className="flex flex-wrap gap-2.5">
+          {samples.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => {
+                setCustomerId(s.id);
+                handleSearch(s.id);
+              }}
+              className={`text-left text-xs px-3.5 py-2.5 rounded-lg border font-medium transition-all duration-200 cursor-pointer ${s.badgeColor}`}
+            >
+              <div className="font-semibold text-xs mb-0.5">{s.name}</div>
+              <div className="opacity-70 text-[10px] font-mono">{s.id}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {error && <div className="error-banner">⚠️ {error}</div>}
 
-      {result && (
+      {result && features && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           {/* Info Banner */}
           <div className="mb-5 flex gap-2">
@@ -85,7 +117,7 @@ export default function CustomerLookup() {
                 color: 'var(--accent-emerald)',
               }}
             >
-              ✅ Profile Loaded — {result.customerId} | Tenure: {samplePayload.tenure_months} months | Total Orders: {samplePayload.frequency_total} | Spend: ₹{samplePayload.monetary_value_total}
+              ✅ Profile Loaded — {result.customerId} | Tenure: {features.tenure_months} months | Total Orders: {features.frequency_total} | Spend: ₹{features.monetary_value_total.toLocaleString()}
             </Badge>
           </div>
 

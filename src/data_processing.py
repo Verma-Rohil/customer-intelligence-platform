@@ -373,5 +373,19 @@ def run_etl():
         raise
 
 
+def sanitize_transaction_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sanitizes transaction records by filtering out negative quantities
+    and calculating the total amount spent after discounts.
+    """
+    # Filter out rows with negative/zero quantity
+    clean_df = df[df['quantity'] > 0].copy()
+    
+    # Calculate custom total_amount: (quantity * unit_price) - discount_applied
+    clean_df['total_amount'] = (clean_df['quantity'] * clean_df['unit_price']) - clean_df['discount_applied'].fillna(0.0)
+    
+    return clean_df
+
+
 if __name__ == "__main__":
     run_etl()

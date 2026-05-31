@@ -48,7 +48,7 @@ export default function ModelPerformance() {
               color: 'var(--accent-emerald)',
             }}
           >
-            🟢 Live Production Model: {info.model_type} (v{info.version}) | Trained on: {info.training_date}
+            🟢 Live Production Model: {info.model_type} (v{info.version})
           </Badge>
         </div>
       )}

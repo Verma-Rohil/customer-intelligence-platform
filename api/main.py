@@ -47,7 +47,6 @@ async def get_model_info():
     return {
         "model_type": "XGBoost Classifier & PyTorch AE",
         "version": "v2.0",
-        "training_date": "2026-05-28",
         "metrics": {
             "roc_auc": 0.92,
             "f1_score": 0.82,

@@ -9,7 +9,7 @@ class CustomerFeatures(BaseModel):
     frequency_total: int = Field(..., ge=1, description="Total purchases completed")
     monetary_value_total: float = Field(..., ge=0.0, description="Total value spent")
     avg_order_value: float = Field(..., ge=0.0, description="Mean order spend")
-    purchase_interval_avg: float = Field(..., ge=0.0, description="Average days between purchases")
+    purchase_interval_avg: float | None = Field(..., description="Average days between purchases")
     basket_diversity: int = Field(..., ge=1, description="Unique categories purchased")
     discount_dependency_ratio: float = Field(..., ge=0.0, le=1.0, description="Ratio of discounted orders")
     login_recency_days: int = Field(..., ge=0, description="Days since last login")

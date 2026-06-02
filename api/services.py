@@ -219,21 +219,43 @@ def get_customer_features(customer_id: str) -> dict:
     if _CUSTOMER_DF is None:
         load_models()
         
-    if _CUSTOMER_DF is None:
-        return None
-        
-    row = _CUSTOMER_DF[_CUSTOMER_DF['customer_id'] == customer_id]
-    if row.empty:
-        return None
-        
-    customer_dict = row.iloc[0].to_dict()
-    
-    # Replace NaN/inf for JSON serialization
-    for k, v in customer_dict.items():
-        if pd.isna(v):
-            customer_dict[k] = None
+    if _CUSTOMER_DF is not None:
+        row = _CUSTOMER_DF[_CUSTOMER_DF['customer_id'] == customer_id]
+        if not row.empty:
+            customer_dict = row.iloc[0].to_dict()
             
-    return customer_dict
+            # Replace NaN/inf for JSON serialization
+            for k, v in customer_dict.items():
+                if pd.isna(v):
+                    customer_dict[k] = None
+                    
+            return customer_dict
+            
+    # Fallback to static fallback_customers.json if CSV is missing or ID not found
+    static_path = os.path.join(STATIC_DATA_DIR, "fallback_customers.json")
+    if os.path.exists(static_path):
+        try:
+            with open(static_path, "r") as f:
+                static_data = json.load(f)
+            for cust in static_data:
+                if cust.get("customer_id") == customer_id:
+                    return cust
+        except Exception as e:
+            logger.error(f"Failed to read static fallback for customer features: {e}")
+            
+    # Also try segment_data.json just in case
+    segment_path = os.path.join(STATIC_DATA_DIR, "segment_data.json")
+    if os.path.exists(segment_path):
+        try:
+            with open(segment_path, "r") as f:
+                static_data = json.load(f)
+            for cust in static_data.get("customers", []):
+                if cust.get("customer_id") == customer_id:
+                    return cust
+        except Exception as e:
+            logger.error(f"Failed to read segment_data fallback: {e}")
+            
+    return None
 
 
 # ──────────────────────────────────────────────────────────

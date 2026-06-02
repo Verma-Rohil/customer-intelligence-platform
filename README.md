@@ -90,6 +90,15 @@ The entry point of the platform, providing quick links to core analytical engine
 Top-line KPIs, segment counts, revenue contribution charts, and spending treemaps by region.
 ![Executive Overview](docs/snapshots/executive_overview.png)
 
+### 🔍 Customer Lookup
+Enables querying individual customer profiles to view real-time churn probability, recommended marketing action plans, and SHAP explainability feature contribution charts.
+
+* **High Risk Customer Profile (98.4% Churn Probability)**:
+![Customer Lookup High Risk](docs/snapshots/customer_lookup_high_risk.png)
+
+* **Low Risk Customer Profile (2.2% Churn Probability)**:
+![Customer Lookup Low Risk](docs/snapshots/customer_lookup_low_risk.png)
+
 ### 🔬 Segment Deep Dive
 Profiles customer cohorts, visualizing their characteristics via radar charts and behavioral distributions.
 ![Segment Deep Dive](docs/snapshots/segment_deep_dive.png)
